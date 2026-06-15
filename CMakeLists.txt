@@ -36,3 +36,7 @@ message(STATUS "Project: ${PROJECT_NAME}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Tests: ${BUILD_TESTS}")
 message(STATUS "Examples: ${BUILD_EXAMPLES}")
+
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(FATAL_ERROR "cmake . in root not allowed, use cmake -B build")
+endif()
