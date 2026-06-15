@@ -53,3 +53,35 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Build directories
+build/
+out/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# VS Code
+.vscode/
+
+# OpenOCD / GDB
+*.cfg.bak
+.gdb_history
+
+# Flash artifacts
+*.bin
+*.srec
+
+# Clangd / LSP
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Ninja
+.ninja_deps
+.ninja_log
