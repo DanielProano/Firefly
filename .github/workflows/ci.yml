@@ -1,0 +1,26 @@
+name: Firefly FTOS CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install ARM 
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi cmake ninja-build
+
+      - name: Configure
+        run: cmake -B build -G ninja
+      
+      - name: build
+        run: cmake --build build
