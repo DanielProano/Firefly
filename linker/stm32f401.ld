@@ -72,6 +72,6 @@ SECTIONS
         _stack_start = .;
         . = . + _min_stack_size;
         . = ALIGN(8);
-        _stack_top = .;
+        _stack_end = .;
     } > sram
 }
