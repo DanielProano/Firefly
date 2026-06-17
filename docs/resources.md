@@ -31,5 +31,8 @@ https://users.informatik.haw-hamburg.de/~krabat/FH-Labor/gnupro/5_GNUPro_Utiliti
 #### Another linker walk through
 https://charleskorn.com/2016/05/08/a-deeper-look-at-the-stm32f4-project-template-linking-it-all-together/
 
-#### Medium article
+#### Medium article on linker
 https://medium.com/@mkklyci/an-introduction-to-linker-files-crafting-your-own-for-embedded-projects-60ad17193229
+
+#### Startup Assembly
+https://github.com/elzoughby/STM32H7xx-Startup
