@@ -11,22 +11,26 @@
 #define RCC_CR_PLLRDY_MASK          (1U << 25)
 
 /* PLL CFGR */
+#define RCC_PLLCFGR_PLLM_CLR_MASK   (63U)
 #define RCC_PLLCFGR_PLLM_MASK       (16U)
+#define RCC_PLLCFGR_PLLP_CLR_MASK   (3U << 16)
 #define RCC_PLLCFGR_PLLP_MASK       (1U << 16)
+#define RCC_PLLCFGR_PLLN_CLR_MASK   (511U << 6)
 #define RCC_PLLCFGR_PLLN_MASK       (336U << 6)
 
 void rcc_init(void) {
-    /* Reset CR */
-    RCC->CR &= 0x00000000;
-
     /* Turn on HSI */
     RCC->CR |= RCC_CR_HSION_MASK;
 
     /* Wait for HSIRDY bit*/
     while(!(RCC->CR & RCC_CR_HSIRDY_MASK));
 
+    /* Reset PLL CFGR*/
+    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM_CLR_MASK);
+    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLN_CLR_MASK);
+    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLP_CLR_MASK);
+
     /* Configure the PLL to be 84MHz */
-    RCC->PLLCFGR &= 0x00000000;
     RCC->PLLCFGR |= RCC_PLLCFGR_PLLM_MASK;
     RCC->PLLCFGR |= RCC_PLLCFGR_PLLP_MASK;
     RCC->PLLCFGR |= RCC_PLLCFGR_PLLN_MASK;
