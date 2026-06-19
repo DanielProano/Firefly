@@ -25,6 +25,9 @@ void rcc_init(void) {
     /* Wait for HSIRDY bit*/
     while(!(RCC->CR & RCC_CR_HSIRDY_MASK));
 
+    /* Select HSI clock */
+    RCC->PLLCFGR &= ~(1U << 22);
+
     /* Reset PLL CFGR*/
     RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM_CLR_MASK);
     RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLN_CLR_MASK);
