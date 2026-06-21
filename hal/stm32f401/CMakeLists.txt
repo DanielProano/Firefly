@@ -1,6 +1,7 @@
 # STATIC forces everything into archive (.a) file
 add_library(hal_stm32f401 STATIC 
     src/rcc.c
+    src/gpio.c
 )
 
 # options for visibility:
