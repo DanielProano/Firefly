@@ -36,3 +36,9 @@ https://medium.com/@mkklyci/an-introduction-to-linker-files-crafting-your-own-fo
 
 #### Startup Assembly
 https://github.com/elzoughby/STM32H7xx-Startup
+
+#### Boot Selection & Reset Circuit Comprehensive Guide
+https://acheronproject.com/reset_article_1/reset_article_1/
+
+#### PLL (Phase Locked Loop) For RCC
+https://en.wikipedia.org/wiki/Phase-locked_loop
