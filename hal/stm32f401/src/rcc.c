@@ -1,48 +1,33 @@
 /* Page 91 of https://www.st.com/resource/en/reference_manual/dm00096844-stm32f401xb-c-and-stm32f401xd-e-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf*/
 
 #include <stdint.h>
-#include "rcc.h"
-
-#define RCC                         ((rcc_struct*) RCC_BASE)
-#define RCC_BASE                    0x40023800
-#define RCC_CR_HSION_MASK           (1U << 0)
-#define RCC_CR_HSIRDY_MASK          (1U << 1)
-#define RCC_CR_PLLON_MASK           (1U << 24)
-#define RCC_CR_PLLRDY_MASK          (1U << 25)
-
-/* PLL CFGR */
-#define RCC_PLLCFGR_PLLM_CLR_MASK   (63U)
-#define RCC_PLLCFGR_PLLM_MASK       (16U)
-#define RCC_PLLCFGR_PLLP_CLR_MASK   (3U << 16)
-#define RCC_PLLCFGR_PLLP_MASK       (1U << 16)
-#define RCC_PLLCFGR_PLLN_CLR_MASK   (511U << 6)
-#define RCC_PLLCFGR_PLLN_MASK       (336U << 6)
+#include <stm32f401xc.h>
 
 void rcc_init(void) {
     /* Turn on HSI */
-    RCC->CR |= RCC_CR_HSION_MASK;
+    RCC->CR |= RCC_CR_HSION_Msk;
 
     /* Wait for HSIRDY bit*/
-    while(!(RCC->CR & RCC_CR_HSIRDY_MASK));
+    while(!(RCC->CR & RCC_CR_HSIRDY_Msk));
 
     /* Select HSI clock */
-    RCC->PLLCFGR &= ~(1U << 22);
+    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLSRC_Msk);
 
     /* Reset PLL CFGR*/
-    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM_CLR_MASK);
-    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLN_CLR_MASK);
-    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLP_CLR_MASK);
+    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM_Msk);
+    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLN_Msk);
+    RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLP_Msk);
 
     /* Configure the PLL to be 84MHz */
-    RCC->PLLCFGR |= RCC_PLLCFGR_PLLM_MASK;
-    RCC->PLLCFGR |= RCC_PLLCFGR_PLLP_MASK;
-    RCC->PLLCFGR |= RCC_PLLCFGR_PLLN_MASK;
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLM_Msk;
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLP_Msk;
+    RCC->PLLCFGR |= RCC_PLLCFGR_PLLN_Msk;
 
     /* Turn on PLL */
-    RCC->CR |= RCC_CR_PLLON_MASK;
+    RCC->CR |= RCC_CR_PLLON_Msk;
 
     /* Wait for Phase Locked Loop */
-    while (!(RCC->CR & RCC_CR_PLLRDY_MASK));
+    while (!(RCC->CR & RCC_CR_PLLRDY_Msk));
 }
 
 void rcc_enable_gpioa(void) {
