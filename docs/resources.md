@@ -42,3 +42,7 @@ https://acheronproject.com/reset_article_1/reset_article_1/
 
 #### PLL (Phase Locked Loop) For RCC
 https://en.wikipedia.org/wiki/Phase-locked_loop
+
+
+#### STM32 Schematic
+https://stm32-base.org/boards/STM32F401CCU6-WeAct-Black-Pill-V1.2.html#Power-LED
