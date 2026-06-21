@@ -13,7 +13,7 @@ int main(void) {
 
     while (1) {
         gpio_toggle_pc13();
-        delay(1000000);
+        delay(5000000);
     }
 
     return 0;
