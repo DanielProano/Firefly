@@ -67,6 +67,8 @@ SECTIONS
         _bss_end = .;
     } > sram
 
+    end = .;
+
     ._stack : ALIGN(8) 
     {
         _stack_start = .;
