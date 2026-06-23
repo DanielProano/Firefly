@@ -46,3 +46,6 @@ https://en.wikipedia.org/wiki/Phase-locked_loop
 
 #### STM32 Schematic
 https://stm32-base.org/boards/STM32F401CCU6-WeAct-Black-Pill-V1.2.html#Power-LED
+
+#### PendSV Interrupt
+https://medium.com/embedworld/arm-cortex-pendsv-the-core-mechanism-behind-rtos-task-switching-7679e68e68da
