@@ -1,8 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
-
-#define MAX_TASKS 16
-#define TASK_STACK_SIZE 256
+#include "rtos_config.h"
 
 /* More Granular States for Debugging*/
 typedef enum {
