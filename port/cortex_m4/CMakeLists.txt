@@ -1,6 +1,6 @@
 add_library(port_cortex_m4 STATIC 
-    port.c
-    port.s
+    src/port.c
+    src/port.s
 )
 
 target_include_directories(port_cortex_m4 PUBLIC 
