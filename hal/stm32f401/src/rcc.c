@@ -1,7 +1,7 @@
 /* Page 91 of https://www.st.com/resource/en/reference_manual/dm00096844-stm32f401xb-c-and-stm32f401xd-e-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf*/
 
 #include <stdint.h>
-#include<gpio.h>
+#include <gpio.h>
 #include <stm32f401xc.h>
 
 void rcc_init(void) {

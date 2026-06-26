@@ -1,5 +1,6 @@
 /* Includes */
 #include <stdint.h>
+#include "fault_indicator.h"
 
 /* Globals */
 
@@ -175,11 +176,7 @@ void (* const vector_table[])(void) = {
 
 /*  Function definitions */
 void Default_Handler(void) {
-
-    // Go into an infinite loop.
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void Reset_Handler(void) {
@@ -200,79 +197,41 @@ void Reset_Handler(void) {
 
     main();
 
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void NMI_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void HardFault_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void MemManage_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void BusFault_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void UsageFault_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void SVC_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void DebugMon_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void PendSV_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }
 
 void SysTick_Handler(void) {
-
-    /* Go into an infinite loop */
-    while(1) {
-
-    }
+    warning_light_init();
 }

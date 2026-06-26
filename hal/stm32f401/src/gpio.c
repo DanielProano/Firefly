@@ -1,12 +1,16 @@
 #include "stm32f401xc.h"
+#include <stdint.h>
 #include "gpio.h"
 
 /*  Page 158 of Reference manual 
     Moder configs whether pin is input, output, ect.
 */
 void gpio_init_pc13(void) {
+    /* Reset */
     GPIOC->MODER &= ~(3U << 26);
-    GPIOC->MODER |= (1U << 26);
+
+    uint32_t enable_output_mode = 1U << 26;
+    GPIOC->MODER |= enable_output_mode;
 }
 
 /*
