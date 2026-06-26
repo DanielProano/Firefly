@@ -1,24 +1,25 @@
+#ifndef TASK_H
+#define TASK_H
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "rtos_config.h"
+#include "gpio.h"
+#include "fault_indicator.h"
+#include <stdint.h>
+
 
 /* More Granular States for Debugging*/
 typedef enum {
     UNINITIALIZED,
     READY,
     RUNNING,
-    BLOCKED_DELAY,
-    BLOCKED_MUTEX,
-    BLOCKED_SEMAPHORE,
-    BLOCKED_QUEUE,
+    BLOCKED,
     SUSPENDED
 } Task_State;
 
 typedef struct {
-    /* For Context Switching*/
     uint32_t    *stack_ptr;
-    /*  Bottom of Stack for Error Checking 
-        Serves as Stack Canary (0xDEADBEEF)*/
     uint32_t    *stack_base;
     uint32_t    stack_size;
     uint32_t    delay_until;
@@ -28,10 +29,10 @@ typedef struct {
 } Task;
 
 Task *task_create(void (*function)(void), uint8_t priority, const char *name);
-
 void task_delay(uint32_t ticks);
-
 bool task_state_overflow(Task task);
 
-static Task task_pool[MAX_TASKS];
-static uint32_t stack_pool[MAX_TASKS][TASK_STACK_SIZE];
+extern Task task_pool[MAX_TASKS];
+extern uint32_t stack_pool[MAX_TASKS][TASK_STACK_SIZE];
+
+#endif
