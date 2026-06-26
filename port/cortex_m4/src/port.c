@@ -2,7 +2,18 @@
 #include "stm32f401xc.h"
 #include <stdint.h>
 
-void port_init(Task *task, uint32_t priority, uint32_t new_task_slot, const char* name) {
+void port_init(void) {
+    /* PendSV docs*/
+    /* https://www.systemonchips.com/step-by-step-guide-to-cortex-m0-pendsv-exception-handling/ */
+    /* Page 226 https://www.st.com/resource/en/programming_manual/pm0214-stm32-cortexm4-mcus-and-mpus-programming-manual-stmicroelectronics.pdf */
+
+    NVIC_SetPriority(PendSV_IRQn, 0xFF);
+    NVIC_SetPriority(SysTick_IRQn, 0x00);
+
+    
+}
+
+void port_init_task_stack(Task *task, void (*function)(void), uint32_t priority, uint32_t new_task_slot, const char* name) {
     task->stack_base = stack_pool[new_task_slot];
     *task->stack_base = 0xDEADBEEF;
 
@@ -11,19 +22,6 @@ void port_init(Task *task, uint32_t priority, uint32_t new_task_slot, const char
     task->priority = priority;
     task->state = READY;
 
-    /* PendSV docs*/
-    /* https://www.systemonchips.com/step-by-step-guide-to-cortex-m0-pendsv-exception-handling/ */
-    /* Page 226 https://www.st.com/resource/en/programming_manual/pm0214-stm32-cortexm4-mcus-and-mpus-programming-manual-stmicroelectronics.pdf */
-
-    SCB->ICSR |= PENDSVSET;
-
-    NVIC_SetPriority(PendSV_IRQn, 0xFF);
-    NVIC_SetPriority(SysTick_IRQn, 0x00);
-
-    //NVIC->ISER |= 
-}
-
-void port_init_task_stack(Task *task, void (*function)(void)) {
     uint32_t *sp = task->stack_base + (TASK_STACK_SIZE);
     
     /* Hardware Fake Frame */
@@ -69,5 +67,5 @@ void port_init_task_stack(Task *task, void (*function)(void)) {
 }
 
 void port_trigger_context_switch(void) {
-    //
+    SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
