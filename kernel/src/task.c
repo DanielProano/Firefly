@@ -1,6 +1,10 @@
 #include "task.h"
 #include "port.h"
 
+Task task_pool[MAX_TASKS];
+uint32_t stack_pool[MAX_TASKS][TASK_STACK_SIZE];
+
+
 Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
     int new_task_slot = -1;
     for (int i = 0; i < MAX_TASKS; i++) {
