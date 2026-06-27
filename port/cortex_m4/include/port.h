@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "task.h"
 #include "rtos_config.h"
+#include "task.h"
 
 #define PENDSVSET (1U << 28)
 
