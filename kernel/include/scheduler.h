@@ -1,11 +1,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-#include "rtos_config.h"
 #include "task.h"
-#include "stddef.h"
 
-extern uint32_t tick_count;
 extern Task *current_task;
 
 void scheduler_init(void);

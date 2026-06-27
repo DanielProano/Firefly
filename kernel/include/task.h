@@ -3,12 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdint.h>
-#include "gpio.h"
 #include "rtos_config.h"
-#include "fault_indicator.h"
-#include "systick.h"
-
 
 /* More Granular States for Debugging*/
 typedef enum {

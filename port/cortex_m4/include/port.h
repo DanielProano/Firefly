@@ -3,7 +3,6 @@
 
 #include <stm32f401xc.h>
 #include <stdint.h>
-#include "task.h"
 #include "rtos_config.h"
 #include "task.h"
 

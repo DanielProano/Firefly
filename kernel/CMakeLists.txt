@@ -1,5 +1,9 @@
 add_library(kernel STATIC 
     src/task.c
+    src/scheduler.c
+    src/mutex.c
+    src/semaphore.c
+    src/queue.c
 )
 
 target_link_libraries(kernel PUBLIC
