@@ -1,8 +1,7 @@
 #include "task.h"
 #include "port.h"
-
-#include "systick.h"
 #include "fault_indicator.h"
+#include "systick.h"
 
 Task task_pool[MAX_TASKS];
 uint32_t stack_pool[MAX_TASKS][TASK_STACK_SIZE];

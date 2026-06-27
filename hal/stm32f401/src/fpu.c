@@ -1,6 +1,5 @@
-#include "stm32f401xc.h"
 #include "fpu.h"
-
+#include "stm32f401xc.h"
 
 /*  Enables FPU hardware 
     https://deepbluembedded.com/stm32-fpu-floating-point-unit-enable-disable/ */

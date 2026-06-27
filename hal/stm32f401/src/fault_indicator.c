@@ -28,7 +28,7 @@ void warning_light_init(void) {
 }
 
 
-void warning_light_mutex(void) {
+void warning_light_scheduler(void) {
     while (1) {
         for (int i = 0; i < 6; i++) {
             gpio_toggle_pc13();

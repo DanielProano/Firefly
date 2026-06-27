@@ -1,4 +1,5 @@
 #include "nvic.h"
+#include "stm32f401xc.h"
 
 /*  NVICs main role is to handle interrupts
     https://microcontrollerslab.com/nested-vectored-interrupt-controller-nvic-arm-cortex-m/ */

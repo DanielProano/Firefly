@@ -1,6 +1,8 @@
 #include "port.h"
+#include "rtos_config.h"
+#include "stm32f401xc.h"
 
-void port_init_task(Task *task, uint32_t priority, uint32_t slot, const char *name) {
+void port_init_task(Task *task, uint8_t priority, uint32_t slot, const char *name) {
     task->stack_base = stack_pool[slot];
     *task->stack_base = 0xDEADBEEF;
 
@@ -55,6 +57,9 @@ void port_init_task_stack(Task *task, void (*function)(void)) {
     task->stack_ptr = sp;
 }
 
+/*  Turn on PendSV exception, so
+    we can save the current task's
+    context to memory */
 void port_trigger_context_switch(void) {
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }

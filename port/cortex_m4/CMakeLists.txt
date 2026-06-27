@@ -2,6 +2,7 @@ add_library(port_cortex_m4 STATIC
     src/port.c
     src/port.s
     src/nvic.c
+    src/systick.c
 )
 
 target_link_libraries(port_cortex_m4 PUBLIC 
