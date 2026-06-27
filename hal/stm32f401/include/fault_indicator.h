@@ -5,6 +5,6 @@
 
 void delay(volatile uint32_t count);
 void warning_light_init(void);
-void warning_light_mutex(void);
+void warning_light_scheduler(void);
 
 #endif

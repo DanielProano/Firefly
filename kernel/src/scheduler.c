@@ -1,28 +1,71 @@
 #include "scheduler.h"
 #include "systick.h"
-#include "stddef.h"
+#include "fault_indicator.h"
+#include "port.h"
+#include "nvic.h"
+#include <stddef.h>
 
 /* Only scheduler.c needs tick count */
-//static uint32_t tick_count = 0;
+static uint32_t tick_count = 0;
 Task *current_task = NULL;
 
 void scheduler_start(void) {
     scheduler_init();
-
+    port_start_first_task();
 }
 
 void scheduler_init(void) {
+    /* Turn on SysTick */
     systick_init();
+    /* Set its priority */
+    nvic_init();
 }
 
-// void scheduler_tick(void) {
+/*  Called every 1ms to unblock 
+    sleeping tasks, setup by 
+    SysTick_Handler */
+void scheduler_tick(void) {
+    tick_count += 1;
 
-// }
+    for (int i = 0; i < MAX_TASKS; i++) {
+        Task *cur_task = &task_pool[i];
 
-// Task *scheduler_get_current_task(void) {
+        if (cur_task->state == BLOCKED && tick_count >= cur_task->delay_until) {
+            cur_task->state = READY;
+        }
+    }
+
+    port_trigger_context_switch();
+}
+
+/*  Used in PendSV after saving the
+    cur task context, PendSV Handler
+    will then select next task */
+void scheduler_select_next_task(void) {
+    Task *next_task = NULL;
+    for (int i = 0; i < MAX_TASKS; i++) {
+        Task *cur_task = &task_pool[i];
+        if (cur_task->state == READY) {
+            if (next_task == NULL) {
+                next_task = cur_task;
+            } else if (cur_task->priority > next_task->priority) {
+                next_task = cur_task;
+            }
+        }
+    }
+
+    /*  Should always have a READY Task,
+        so shouldn't have to worry about this */
+    if (next_task == NULL) {
+        return;
+    }
+
+    /*  Mark current task as READY and 
+        next task as RUNNING */
+    if (current_task != NULL && current_task->state == RUNNING) {
+        current_task->state = READY;
+    }
     
-// }
-
-// void scheduler_select_next_task(void) {
-
-// }
+    next_task->state = RUNNING;
+    current_task = next_task;
+}

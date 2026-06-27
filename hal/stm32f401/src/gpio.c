@@ -1,6 +1,6 @@
+#include "gpio.h"
 #include "stm32f401xc.h"
 #include <stdint.h>
-#include "gpio.h"
 
 /*  Page 158 of Reference manual 
     Moder configs whether pin is input, output, ect.
