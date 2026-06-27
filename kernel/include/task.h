@@ -4,10 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "rtos_config.h"
-#include "gpio.h"
-#include "fault_indicator.h"
-#include <stdint.h>
-
 
 /* More Granular States for Debugging*/
 typedef enum {
