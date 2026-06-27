@@ -2,7 +2,6 @@
 add_library(hal_stm32f401 STATIC 
     src/rcc.c
     src/gpio.c
-    src/nvic.c
     src/fpu.c
 )
 

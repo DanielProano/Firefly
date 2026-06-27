@@ -20,8 +20,9 @@ Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
     }
 
     Task *new_task = &task_pool[new_task_slot];
-    port_init();
-    port_init_task_stack(new_task, function, priority, new_task_slot, name);
+    port_init_task(new_task, priority, new_task_slot, name);
+    port_init_task_stack(new_task, function);
+    systick_init();
     return new_task;
 }
 
