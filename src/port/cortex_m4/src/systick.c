@@ -26,7 +26,6 @@ void systick_init(void) {
     /* Page 249 of cortex*/
     /* Just clear it */
     SysTick->VAL = 0x00;
-
 }
 
 void SysTick_Handler(void) {

@@ -25,7 +25,6 @@ typedef struct {
 } Task;
 
 Task *task_create(void (*function)(void), uint8_t priority, const char *name);
-void task_delay(uint32_t ticks);
 bool task_state_overflow(Task task);
 
 extern Task task_pool[MAX_TASKS];

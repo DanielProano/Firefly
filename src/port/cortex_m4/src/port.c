@@ -16,6 +16,7 @@ void port_init_task_stack(Task *task, void (*function)(void)) {
     uint32_t *sp = task->stack_base + (TASK_STACK_SIZE);
     
     /* Hardware Fake Frame */
+
     
     *(--sp) = 0x0;  /* FPSCR */
     *(--sp) = 0x0;  /* S15 */
@@ -42,6 +43,23 @@ void port_init_task_stack(Task *task, void (*function)(void)) {
     *(--sp) = 0x0;  /* R2 */
     *(--sp) = 0x0;  /* R1 */
     *(--sp) = 0x0;  /* R0 */
+
+    *(--sp) = 0x0;  /* S31 */
+    *(--sp) = 0x0;  /* S30 */
+    *(--sp) = 0x0;  /* S29 */
+    *(--sp) = 0x0;  /* S28 */
+    *(--sp) = 0x0;  /* S27 */
+    *(--sp) = 0x0;  /* S26 */
+    *(--sp) = 0x0;  /* S25 */
+    *(--sp) = 0x0;  /* S24 */
+    *(--sp) = 0x0;  /* S23 */
+    *(--sp) = 0x0;  /* S22 */
+    *(--sp) = 0x0;  /* S21 */
+    *(--sp) = 0x0;  /* S20 */
+    *(--sp) = 0x0;  /* S19 */
+    *(--sp) = 0x0;  /* S18 */
+    *(--sp) = 0x0;  /* S17 */
+    *(--sp) = 0x0;  /* S16 */
 
     /* Software Fake Frame*/
 
