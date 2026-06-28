@@ -1,3 +1,5 @@
+/*  Tell CPU thumb instrs.
+    are 32 bits not 16 */
 .syntax unified
 .text
 
@@ -8,6 +10,7 @@ PendSV_Handler:
         special register to a 
         general purpose register */
     MRS R0, PSP
+    VSTMDB R0!, {S16-S31}
     /*  ARM assembly is beautiful,
         wdym I can do R4-R11 at once,
         also this is STM-DB, where
@@ -38,9 +41,10 @@ PendSV_Handler:
         PSP to thread mode,
         0xFFFFFFFD returns 
         to Thread from PSP */
+    VLDMIA R0!, {S16-S31}
     MSR PSP, R0
 
-    MOV LR, #0xFFFFFFFD
+    MOV LR, #0xFFFFFFED
     BX LR
 
 /*  Function to manually bootstrap task
@@ -67,6 +71,8 @@ SVC_Handler:
 
     /*  Load all registers of fake frame*/
     LDMIA R0!, {R4-R11}
+    /*  Pop FPU registers */
+    VLDMIA R0!, {S16-S31}
     /*  Store updated PSP back */
     MSR PSP, R0
 
@@ -81,5 +87,5 @@ SVC_Handler:
 
     /* Return to Thread Mode */
 
-    MOV LR, #0xFFFFFFFD
+    MOV LR, #0xFFFFFFED
     BX LR

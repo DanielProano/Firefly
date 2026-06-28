@@ -69,3 +69,10 @@ void scheduler_select_next_task(void) {
     next_task->state = RUNNING;
     current_task = next_task;
 }
+
+void task_delay(uint32_t ticks) {
+    current_task->delay_until = tick_count + ticks;
+    current_task->state = BLOCKED;
+
+    port_trigger_context_switch();
+}
