@@ -21,9 +21,9 @@ add_compile_options(
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_EXAMPLES "Build examples" OFF)
 
-add_subdirectory(kernel)
-add_subdirectory(port/cortex_m4)
-add_subdirectory(hal/stm32f401)
+add_subdirectory(src/kernel)
+add_subdirectory(src/port/cortex_m4)
+add_subdirectory(src/hal/stm32f401)
 
 if(BUILD_TESTS)
     add_subdirectory(tests)
