@@ -1,3 +1,0 @@
-PendSV_Handler:
-
-port_start_first_task:
