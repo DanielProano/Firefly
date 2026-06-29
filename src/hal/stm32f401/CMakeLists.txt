@@ -3,6 +3,7 @@ add_library(hal_stm32f401 STATIC
     src/rcc.c
     src/gpio.c
     src/fpu.c
+    src/fault_indicator.c
 )
 
 # options for visibility:

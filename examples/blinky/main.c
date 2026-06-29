@@ -1,9 +1,6 @@
 #include "hal.h"
 #include "stdint.h"
-
-void delay(volatile uint32_t count) {
-    while (count--);
-}
+#include "fault_indicator.h"
 
 int main(void) {
     fpu_init();
@@ -14,7 +11,7 @@ int main(void) {
 
     while (1) {
         gpio_toggle_pc13();
-        delay(5000000);
+        delay(10000000);
     }
 
     return 0;
