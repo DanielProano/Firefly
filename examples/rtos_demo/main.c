@@ -1,3 +1,4 @@
+#include "gpio.h"
 #include "hal.h"
 #include "task.h"
 #include "scheduler.h"
@@ -23,15 +24,9 @@ int main(void) {
 
 void task_one(void) {
     while (1) {
-        gpio_toggle_pc13();
+        gpio_set_pc13();
 
         delay(10000000);
-
-        gpio_toggle_pc13();
-
-        delay(10000000);
-
-        gpio_toggle_pc13();
 
         task_delay(1000);
     }
@@ -39,11 +34,7 @@ void task_one(void) {
 
 void task_two(void) {
     while (1) {
-        gpio_toggle_pc13();
-
-        delay(500000);
-
-        gpio_toggle_pc13();
+        gpio_clear_pc13();
 
         delay(500000);
 
