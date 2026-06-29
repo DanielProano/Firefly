@@ -13,18 +13,19 @@ void gpio_init_pc13(void) {
     GPIOC->MODER |= enable_output_mode;
 }
 
+
 /*
     Turn on LED
 */
 void gpio_set_pc13(void) {
-    GPIOC->ODR |= (1U << 13);
+    GPIOC->ODR &= ~(1U << 13);
 }
 
 /*
     Turn off LED
 */
 void gpio_clear_pc13(void) {
-    GPIOC->ODR &= ~(1U << 13);
+    GPIOC->ODR |= (1U << 13);
 }
 
 /*
