@@ -1,28 +1,10 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include "rtos_config.h"
+#include "task_types.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "rtos_config.h"
-
-/* More Granular States for Debugging*/
-typedef enum {
-    UNINITIALIZED,
-    READY,
-    RUNNING,
-    BLOCKED,
-    SUSPENDED
-} Task_State;
-
-typedef struct {
-    uint32_t    *stack_ptr;
-    uint32_t    *stack_base;
-    uint32_t    stack_size;
-    uint32_t    delay_until;
-    Task_State  state;
-    uint8_t     priority;
-    const char  *name;
-} Task;
 
 Task *task_create(void (*function)(void), uint8_t priority, const char *name);
 bool task_state_overflow(Task task);

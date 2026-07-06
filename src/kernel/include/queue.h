@@ -1,8 +1,8 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include "stdint.h"
 #include "task.h"
+#include <stdint.h>
 typedef struct {
     Task *enqueue_waiting;
     Task *dequeue_waiting;

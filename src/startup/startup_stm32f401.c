@@ -176,7 +176,7 @@ void (* const vector_table[])(void) = {
 
 /*  Function definitions */
 void Default_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void Reset_Handler(void) {
@@ -197,41 +197,41 @@ void Reset_Handler(void) {
 
     main();
 
-    warning_light_init();
+    warning_light();
 }
 
 void NMI_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void HardFault_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void MemManage_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void BusFault_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void UsageFault_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void SVC_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void DebugMon_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void PendSV_Handler(void) {
-    warning_light_init();
+    warning_light();
 }
 
 void SysTick_Handler(void) {
-    warning_light_init();
+    warning_light();
 }

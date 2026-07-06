@@ -16,7 +16,3 @@ target_include_directories(hal_stm32f401 PUBLIC
     include 
     ${CMAKE_SOURCE_DIR}/config 
 )
-
-target_link_libraries(hal_stm32f401 PUBLIC 
-    port_cortex_m4
-)

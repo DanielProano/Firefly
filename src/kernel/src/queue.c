@@ -1,7 +1,6 @@
 #include "queue.h"
 #include "scheduler.h"
 #include "port.h"
-#include "fault_indicator.h"
 #include <stddef.h>
 #include <string.h>
 
@@ -43,7 +42,7 @@ void enqueue(Queue *queue, void *item) {
         check queue is not full */
     while (queue->count == queue->depth) {
         if (queue->enqueue_waiting != NULL) {
-            warning_light_scheduler();
+            port_fault();
         }
         queue->enqueue_waiting = current_task;
         current_task->state = BLOCKED;
@@ -68,7 +67,7 @@ void enqueue(Queue *queue, void *item) {
 void dequeue(Queue *queue, void *out) {
     while (queue->count == 0) {
         if (queue->dequeue_waiting != NULL) {
-            warning_light_scheduler();
+            port_fault();
         }
         queue->dequeue_waiting = current_task;
         current_task->state = BLOCKED;

@@ -1,5 +1,4 @@
 #include "systick.h"
-#include "scheduler.h"
 #include "stm32f401xc.h"
 
 void systick_init(void) {
@@ -28,6 +27,6 @@ void systick_init(void) {
     SysTick->VAL = 0x00;
 }
 
-void SysTick_Handler(void) {
-    scheduler_tick();
+void SysTick_Handler(void (*tick_callback)(void)) {
+    tick_callback();
 }
