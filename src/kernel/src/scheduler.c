@@ -1,9 +1,7 @@
 #include "scheduler.h"
 #include "systick.h"
-#include "fault_indicator.h"
 #include "port.h"
 #include "nvic.h"
-#include "stm32f401xc.h"
 #include <stddef.h>
 
 /* Only scheduler.c needs tick count */
@@ -16,12 +14,8 @@ void scheduler_start(void) {
 }
 
 void idle_task(void) {
-    while (1) {
-        /*  Special ARM Instr
-            to put CPU to sleep until 
-            next interrupt fires */
-        __WFI();
-    }
+    /* This taks just sleeps */
+    port_idle();
 }
 
 void scheduler_init(void) {
@@ -43,7 +37,7 @@ void scheduler_tick(void) {
         Task *cur_task = &task_pool[i];
 
         if (cur_task->state != UNINITIALIZED && task_state_overflow(*cur_task)) {
-            warning_light_init();
+            port_fault();
         }
 
         if (cur_task->state == BLOCKED && tick_count >= cur_task->delay_until) {

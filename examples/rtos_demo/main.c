@@ -1,6 +1,6 @@
 #include "gpio.h"
-#include "hal.h"
-#include "task.h"
+#include "rcc.h"
+#include "fpu.h"
 #include "scheduler.h"
 #include "fault_indicator.h"
 #include <stdint.h>

@@ -1,7 +1,6 @@
 #include "mutex.h"
 #include "scheduler.h"
 #include "port.h"
-#include "fault_indicator.h"
 #include <stddef.h>
 
 void mutex_init(Mutex *mutex) {
@@ -13,7 +12,7 @@ void mutex_init(Mutex *mutex) {
 void mutex_lock(Mutex *mutex) {
     while (mutex->is_locked) {
         if (mutex->waiting != NULL) {
-            warning_light_scheduler();
+            port_fault();
         }
         mutex->waiting = current_task;
         current_task->state = BLOCKED;
