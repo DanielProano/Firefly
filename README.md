@@ -24,7 +24,7 @@ Dependencies for Arch Linux:
 sudo pacman -S arm-none-eabi-gcc arm-none-eabi-newlib cmake openocd
 ```
 Then attach ST-Link to corresponding SWDIO, 
-SDCLK, NRST, 3.3V, & GND on STM32.
+SWCLK, NRST, 3.3V, & GND on STM32.
 
 From root, here is how to blink the light:
 
