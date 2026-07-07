@@ -1,5 +1,7 @@
 # Resources For RTOS & STM32
 
+Visit my [website](https://dannyproano.com/research/firefly) for a detailed technical guide!
+
 ## STM32F401xC
 
 ### Datasheet
