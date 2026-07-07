@@ -7,7 +7,7 @@ on the Cortex M architecture and was implemented in C & assembly.
 
 ## Motivation
 
-I am developing an Autonomous Drone & Plane this summer! While 
+I am developing an Autonomous Drone & Plane for my sophomore summer! While 
 I could just as easily use an open source real time operating 
 system, the idea behind this project is to learn the 
 foundation of embedded engineering & own the whole stack!
