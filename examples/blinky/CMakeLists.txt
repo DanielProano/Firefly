@@ -1,4 +1,4 @@
-add_executable(blinky main.c ${CMAKE_SOURCE_DIR}/startup/startup_stm32f401.c)
+add_executable(blinky main.c ${CMAKE_SOURCE_DIR}/startup/stm32f401.c)
 
 target_link_libraries(blinky 
     hal_stm32f401
