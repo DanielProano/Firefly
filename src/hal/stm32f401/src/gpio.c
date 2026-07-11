@@ -6,9 +6,13 @@
     Moder configs whether pin is input, output, ect.
 */
 void gpio_init_pc13(void) {
+    /*Turn on the clock for the GPIO C port*/
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+
     /* Reset */
     GPIOC->MODER &= ~(3U << 26);
 
+    /* Configure pin functionality (in this case as output) */
     uint32_t enable_output_mode = 1U << 26;
     GPIOC->MODER |= enable_output_mode;
 }

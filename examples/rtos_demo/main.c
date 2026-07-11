@@ -1,6 +1,7 @@
 #include "gpio.h"
 #include "rcc.h"
 #include "fpu.h"
+#include "nvic.h"
 #include "scheduler.h"
 #include "fault_indicator.h"
 #include <stdint.h>
@@ -11,8 +12,8 @@ void task_two(void);
 int main(void) {
     fpu_init();
     rcc_init();
-    rcc_enable_gpioc();
     gpio_init_pc13();
+    nvic_init();
 
     task_create(&task_one, 1, "task one");
     task_create(&task_two, 2, "task two");

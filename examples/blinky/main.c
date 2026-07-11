@@ -7,7 +7,6 @@
 int main(void) {
     fpu_init();
     rcc_init();
-    rcc_enable_gpioc();
     gpio_init_pc13();
 
     while (1) {

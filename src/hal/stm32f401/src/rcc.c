@@ -61,7 +61,3 @@ void rcc_init(void) {
     /* Wait for System Clock Switch*/
     while((RCC->CFGR & RCC_CFGR_SWS_Msk) != (2U << RCC_CFGR_SWS_Pos));
 }
-
-void rcc_enable_gpioc(void) {
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
-}
