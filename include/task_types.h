@@ -9,8 +9,7 @@ typedef enum {
     UNINITIALIZED,
     READY,
     RUNNING,
-    BLOCKED,
-    SUSPENDED
+    BLOCKED
 } Task_State;
 
 

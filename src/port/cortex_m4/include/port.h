@@ -2,7 +2,6 @@
 #define PORT_H
 
 #include "task_types.h"
-#include "fault_indicator.h"
 #include <stdint.h>
 
 #define PENDSVSET (1U << 28)

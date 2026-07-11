@@ -1,5 +1,6 @@
 #include "port.h"
 #include "rtos_config.h"
+#include "fault_indicator.h"
 #include "stm32f401xc.h"
 
 void port_init_task(Task *task, uint8_t priority, uint32_t slot, const char *name) {
