@@ -81,3 +81,13 @@ void port_init_task_stack(Task *task, void (*function)(void)) {
 void port_trigger_context_switch(void) {
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
+
+void port_fault(void) {
+    warning_light();
+}
+
+void port_idle(void) {
+    while (1) {
+        __WFI();
+    }
+}

@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 void delay(volatile uint32_t count);
-void warning_light_init(void);
+void warning_light(void);
 void warning_light_scheduler(void);
 
 #endif

@@ -1,6 +1,5 @@
 #include "task.h"
 #include "port.h"
-#include "fault_indicator.h"
 #include "scheduler.h"
 
 Task task_pool[MAX_TASKS];
@@ -17,7 +16,7 @@ Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
 
     /* Fail if not enough task slots available */
     if (new_task_slot == -1) {
-        warning_light_init();
+        port_fault();
     }
 
     Task *new_task = &task_pool[new_task_slot];

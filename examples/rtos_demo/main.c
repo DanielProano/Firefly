@@ -1,7 +1,7 @@
 #include "gpio.h"
-#include "hal.h"
+#include "rcc.h"
+#include "fpu.h"
 #include "nvic.h"
-#include "task.h"
 #include "scheduler.h"
 #include "fault_indicator.h"
 #include <stdint.h>

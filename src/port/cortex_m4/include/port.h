@@ -1,8 +1,9 @@
 #ifndef PORT_H 
 #define PORT_H
 
+#include "task_types.h"
+#include "fault_indicator.h"
 #include <stdint.h>
-#include "task.h"
 
 #define PENDSVSET (1U << 28)
 
@@ -14,5 +15,7 @@ void port_trigger_context_switch(void);
 /* In port.s */
 void PendSV_Handler(void);
 void port_start_first_task(void);
+void port_fault(void);
+void port_idle(void);
 
 #endif

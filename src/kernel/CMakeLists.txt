@@ -7,10 +7,11 @@ add_library(kernel STATIC
 )
 
 target_link_libraries(kernel PUBLIC
-    hal_stm32f401
+    port_cortex_m4
 )
 
 target_include_directories(kernel PUBLIC 
     include
-    ${CMAKE_SOURCE_DIR}/config
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../config
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../include
 )
