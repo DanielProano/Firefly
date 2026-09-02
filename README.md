@@ -47,5 +47,6 @@ cmake --build build
 I believe AI is an exceptional tool but not a substitute for learning. 
 Therefore, AI suggestions were considered, evaluated, and
 applied to the file structure, some implementation details, and 
-for general proof reading. However, NO code was generated was AI,
-every line was typed & extensively thought about by me.
+for general proof reading. Most of the initial code was painstakingly
+written by me via datasheets and tutorials while some of the later 
+data structures were partially written by AI
