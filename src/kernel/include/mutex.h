@@ -6,7 +6,7 @@
 
 typedef struct {
     Task *owner;
-    Task *waiting;
+    Task *waiting[MAX_TASKS];
     bool is_locked;
 } Mutex;
 

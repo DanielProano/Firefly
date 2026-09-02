@@ -5,8 +5,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 typedef struct {
-    Task *enqueue_waiting;
-    Task *dequeue_waiting;
+    Task *enqueue_waiting[MAX_TASKS];
+    Task *dequeue_waiting[MAX_TASKS];
     void *buffer;
     uint8_t item_size;
     uint8_t depth;

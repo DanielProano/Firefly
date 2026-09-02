@@ -4,7 +4,7 @@
 #include "task.h"
 #include <stdint.h>
 typedef struct {
-    Task *waiting;
+    Task *waiting[MAX_TASKS];
     uint8_t max_count;
     uint8_t count;
 } Semaphore;
