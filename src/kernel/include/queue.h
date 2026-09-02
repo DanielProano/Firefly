@@ -2,6 +2,7 @@
 #define QUEUE_H
 
 #include "task.h"
+#include <stdbool.h>
 #include <stdint.h>
 typedef struct {
     Task *enqueue_waiting;
@@ -17,5 +18,7 @@ typedef struct {
 void queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth);
 void enqueue(Queue *queue, void *item);
 void dequeue(Queue *queue, void *item);
+bool enqueue_isr(Queue *queue, void *item);
+bool dequeue_isr(Queue *queue, void *item);
 
 #endif

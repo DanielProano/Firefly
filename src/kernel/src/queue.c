@@ -84,3 +84,39 @@ void dequeue(Queue *queue, void *out) {
         port_trigger_context_switch();
     }
 }
+
+bool enqueue_isr(Queue *queue, void *item) {
+    if (queue->count == queue->depth) {
+        return false;
+    }
+
+    memcpy((uint8_t*)queue->buffer + (queue->tail * queue->item_size), item, queue->item_size);
+    queue->tail = (queue->tail + 1) % queue->depth;
+    queue->count += 1;
+
+    if (queue->dequeue_waiting != NULL) {
+        queue->dequeue_waiting->state = READY;
+        queue->dequeue_waiting = NULL;
+        port_trigger_context_switch();
+    }
+
+    return true;
+}
+
+bool dequeue_isr(Queue *queue, void *out) {
+    if (queue->count == 0) {
+        return false;
+    }
+
+    memcpy(out, (uint8_t*)queue->buffer + (queue->head * queue->item_size), queue->item_size);
+    queue->head = (queue->head + 1) % queue->depth;
+    queue->count -= 1;
+
+    if (queue->enqueue_waiting != NULL) {
+        queue->enqueue_waiting->state = READY;
+        queue->enqueue_waiting = NULL;
+        port_trigger_context_switch();
+    }
+
+    return true;
+}
