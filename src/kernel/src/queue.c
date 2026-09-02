@@ -1,6 +1,7 @@
 #include "queue.h"
 #include "scheduler.h"
 #include "port.h"
+#include "stm32f401xc.h"
 #include <stddef.h>
 #include <string.h>
 
@@ -19,7 +20,13 @@ void queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth) {
 }
 
 void enqueue(Queue *queue, void *item) {
-    while (queue->count == queue->depth) {
+    for (;;) {
+        __disable_irq();
+
+        if (queue->count != queue->depth) {
+            break;
+        }
+
         int slot = -1;
 
         for (int i = 0; i < MAX_TASKS; i++) {
@@ -30,11 +37,14 @@ void enqueue(Queue *queue, void *item) {
         }
 
         if (slot == -1) {
+            __enable_irq();
             port_fault();
         }
 
         queue->enqueue_waiting[slot] = current_task;
         current_task->state = BLOCKED;
+
+        __enable_irq();
         port_trigger_context_switch();
     }
 
@@ -52,13 +62,21 @@ void enqueue(Queue *queue, void *item) {
         }
     }
 
+    __enable_irq();
+
     if (woke_waiter) {
         port_trigger_context_switch();
     }
 }
 
 void dequeue(Queue *queue, void *out) {
-    while (queue->count == 0) {
+    for (;;) {
+        __disable_irq();
+
+        if (queue->count != 0) {
+            break;
+        }
+
         int slot = -1;
 
         for (int i = 0; i < MAX_TASKS; i++) {
@@ -69,11 +87,14 @@ void dequeue(Queue *queue, void *out) {
         }
 
         if (slot == -1) {
+            __enable_irq();
             port_fault();
         }
 
         queue->dequeue_waiting[slot] = current_task;
         current_task->state = BLOCKED;
+
+        __enable_irq();
         port_trigger_context_switch();
     }
 
@@ -90,6 +111,8 @@ void dequeue(Queue *queue, void *out) {
             woke_waiter = true;
         }
     }
+
+    __enable_irq();
 
     if (woke_waiter) {
         port_trigger_context_switch();
