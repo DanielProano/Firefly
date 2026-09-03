@@ -119,6 +119,73 @@ void dequeue(Queue *queue, void *out) {
     }
 }
 
+bool dequeue_timeout(Queue *queue, void *out, uint32_t timeout_ticks) {
+    uint32_t deadline = scheduler_get_tick_count() + timeout_ticks;
+
+    for (;;) {
+        __disable_irq();
+
+        if (queue->count != 0) {
+            break;
+        }
+
+        if (scheduler_get_tick_count() >= deadline) {
+            for (int i = 0; i < MAX_TASKS; i++) {
+                if (queue->dequeue_waiting[i] == current_task) {
+                    queue->dequeue_waiting[i] = NULL;
+                    break;
+                }
+            }
+
+            __enable_irq();
+            return false;
+        }
+
+        int slot = -1;
+
+        for (int i = 0; i < MAX_TASKS; i++) {
+            if (queue->dequeue_waiting[i] == NULL) {
+                slot = i;
+                break;
+            }
+        }
+
+        if (slot == -1) {
+            __enable_irq();
+            port_fault();
+        }
+
+        queue->dequeue_waiting[slot] = current_task;
+        current_task->delay_until = deadline;
+        current_task->state = BLOCKED;
+
+        __enable_irq();
+        port_trigger_context_switch();
+    }
+
+    memcpy(out, (uint8_t*)queue->buffer + (queue->head * queue->item_size), queue->item_size);
+    queue->head = (queue->head + 1) % queue->depth;
+    queue->count -= 1;
+
+    bool woke_waiter = false;
+
+    for (int i = 0; i < MAX_TASKS; i++) {
+        if (queue->enqueue_waiting[i] != NULL) {
+            queue->enqueue_waiting[i]->state = READY;
+            queue->enqueue_waiting[i] = NULL;
+            woke_waiter = true;
+        }
+    }
+
+    __enable_irq();
+
+    if (woke_waiter) {
+        port_trigger_context_switch();
+    }
+
+    return true;
+}
+
 bool enqueue_isr(Queue *queue, void *item) {
     if (queue->count == queue->depth) {
         return false;

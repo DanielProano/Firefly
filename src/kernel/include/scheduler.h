@@ -10,5 +10,6 @@ void scheduler_start(void);
 void scheduler_tick(void);
 void scheduler_select_next_task(void);
 void task_delay(uint32_t ticks);
+uint32_t scheduler_get_tick_count(void);
 
 #endif

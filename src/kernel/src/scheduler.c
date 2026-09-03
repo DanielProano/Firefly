@@ -4,7 +4,6 @@
 #include "nvic.h"
 #include <stddef.h>
 
-/* Only scheduler.c needs tick count */
 static uint32_t tick_count = 0;
 Task *current_task = NULL;
 
@@ -85,4 +84,8 @@ void task_delay(uint32_t ticks) {
     current_task->state = BLOCKED;
 
     port_trigger_context_switch();
+}
+
+uint32_t scheduler_get_tick_count(void) {
+    return tick_count;
 }
