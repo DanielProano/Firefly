@@ -1,5 +1,6 @@
 #include "systick.h"
 #include "stm32f401xc.h"
+#include "scheduler.h"
 
 void systick_init(void) {
     /* Page 247 in cortex manual*/
@@ -27,6 +28,6 @@ void systick_init(void) {
     SysTick->VAL = 0x00;
 }
 
-void SysTick_Handler(void (*tick_callback)(void)) {
-    tick_callback();
+void SysTick_Handler(void) {
+    scheduler_tick();
 }
