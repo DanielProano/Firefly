@@ -42,11 +42,11 @@ cmake --build build
 ./tools/flash.sh examples/rtos_demo/rtos_demo
 ```
 
-## PinOUT
+## Wiring Diagram
 
-https://deepbluembedded.com/stm32f411-black-pill-board-pinout-schematic-datasheet/
+<img width="1333" height="1652" alt="image" src="https://github.com/user-attachments/assets/9411b708-111b-402e-a961-c2170ff3eb72" />
 
-![alt text](image.png)
+Pinout reference: https://deepbluembedded.com/stm32f411-black-pill-board-pinout-schematic-datasheet/
 
 ## AI Policy
 
