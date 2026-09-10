@@ -42,6 +42,12 @@ cmake --build build
 ./tools/flash.sh examples/rtos_demo/rtos_demo
 ```
 
+## PinOUT
+
+https://deepbluembedded.com/stm32f411-black-pill-board-pinout-schematic-datasheet/
+
+![alt text](image.png)
+
 ## AI Policy
 
 I believe AI is an exceptional tool but not a substitute for learning. 
