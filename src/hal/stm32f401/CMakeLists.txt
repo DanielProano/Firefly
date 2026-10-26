@@ -6,6 +6,10 @@ add_library(hal_stm32f401 STATIC
     src/fault_indicator.c
 )
 
+target_link_libraries(hal_stm32f401 PUBLIC
+    cmsis
+)
+
 # options for visibility:
 #   PUBLIC: everything can see it
 #   PRIVATE: only this hal can see it

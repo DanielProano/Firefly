@@ -24,6 +24,7 @@ option(BUILD_EXAMPLES "Build examples" OFF)
 add_subdirectory(src/kernel)
 add_subdirectory(src/port/cortex_m4)
 add_subdirectory(src/hal/stm32f401)
+add_subdirectory(external/cmsis)
 
 if(BUILD_TESTS)
     add_subdirectory(tests)

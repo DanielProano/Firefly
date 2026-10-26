@@ -6,19 +6,15 @@
 .global PendSV_Handler
 .thumb_func
 PendSV_Handler:
-    /*  MRS: move contents of 
-        special register to a 
-        general purpose register */
-    MRS R0, PSP
-    VSTMDB R0!, {S16-S31}
-    /*  ARM assembly is beautiful,
-        wdym I can do R4-R11 at once,
-        also this is STM-DB, where
-        DB is decrement before each access */
-    STMDB R0!, {R4-R11}
 
     /* Handle saving PSP */
 
+    /* Load PSP into R0 */
+    MRS R0, PSP
+    /* Save FPU registers */
+    VSTMDB R0!, {S16-S31}
+    /* Save Stack registers */
+    STMDB R0!, {R4-R11, LR}
     /*  Get pointer to current task */
     LDR R1, =current_task
     /* Dereference pointer */
@@ -35,16 +31,13 @@ PendSV_Handler:
     LDR R0, [R0]
     /* Load stack ptr */
     LDR R0, [R0, #0]
-    /* Pop Registers */
-    LDMIA R0!, {R4-R11}
-    /*  Need to return from
-        PSP to thread mode,
-        0xFFFFFFFD returns 
-        to Thread from PSP */
+    /* Pop normal registers */
+    LDMIA R0!, {R4-R11, LR}
+    /* Pop FPU registers */
     VLDMIA R0!, {S16-S31}
+    /* Load PSP value */
     MSR PSP, R0
 
-    MOV LR, #0xFFFFFFED
     BX LR
 
 /*  Function to manually bootstrap task
@@ -70,7 +63,7 @@ SVC_Handler:
     /* Load Fake Context from stack */
 
     /*  Load all registers of fake frame*/
-    LDMIA R0!, {R4-R11}
+    LDMIA R0!, {R4-R11, LR}
     /*  Pop FPU registers */
     VLDMIA R0!, {S16-S31}
     /*  Store updated PSP back */
@@ -84,7 +77,7 @@ SVC_Handler:
     MSR CONTROL, R1
     /* ISB is used to refresh & sync */
     ISB
-
+    
     /* Return to Thread Mode */
 
     MOV LR, #0xFFFFFFED
