@@ -1,9 +1,6 @@
-#include "gpio.h"
-#include "rcc.h"
-#include "fpu.h"
+#include "hal.h"
 #include "nvic.h"
 #include "scheduler.h"
-#include "fault_indicator.h"
 #include <stdint.h>
 
 void task_one(void);

@@ -10,6 +10,10 @@ target_link_libraries(kernel PUBLIC
     port_cortex_m4
 )
 
+target_link_libraries(kernel PRIVATE
+    cmsis
+)
+
 target_include_directories(kernel PUBLIC 
     include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../config

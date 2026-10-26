@@ -2,6 +2,11 @@
 
 Visit my [website](https://dannyproano.com/research/firefly) for a detailed technical guide!
 
+## Cortex M4
+
+### Refernce Manual
+https://users.ece.utexas.edu/~valvano/EE345L/Labs/Fall2011/CortexM4_TRM_r0p1.pdf
+
 ## STM32F401xC
 
 ### Datasheet

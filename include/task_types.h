@@ -1,17 +1,17 @@
 #ifndef TASK_TYPES_H
 #define TASK_TYPES_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include "rtos_config.h"
 
-/* More Granular States for Debugging*/
+/* More Granular States for Debugging */
 typedef enum {
     UNINITIALIZED,
     READY,
     RUNNING,
     BLOCKED
 } Task_State;
-
 
 typedef struct {
     uint32_t    *stack_ptr;
@@ -20,6 +20,7 @@ typedef struct {
     uint32_t    delay_until;
     Task_State  state;
     uint8_t     priority;
+    bool        uses_fpu;
     const char  *name;
 } Task;
 

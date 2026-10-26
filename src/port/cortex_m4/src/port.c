@@ -18,7 +18,20 @@ void port_init_task_stack(Task *task, void (*function)(void)) {
     
     /* Hardware Fake Frame */
 
-    
+    /*
+        There was a bug here, the result of a misunderstanding 
+        of the hardware. A stack canary was getting overwritten
+        and the reason was because of 8 byte alignment. With 
+        FPU enabled, the CPU will pop 26 words, even though there
+        is only 25 data words. This is because 4 * 25 = 100. We 
+        need the bytes to be 8 byte, so we need to 26 words to get 
+        to 106 bytes.
+
+        Read pg. 536 of https://www.pjrc.com/teensy/DDI0403Ee_arm_v7m_ref_manual.pdf
+    */
+
+    *(--sp) = 0x0;  /* Reserved word for padding */
+
     *(--sp) = 0x0;  /* FPSCR */
     *(--sp) = 0x0;  /* S15 */
     *(--sp) = 0x0;  /* S14 */
@@ -61,6 +74,8 @@ void port_init_task_stack(Task *task, void (*function)(void)) {
     *(--sp) = 0x0;  /* S18 */
     *(--sp) = 0x0;  /* S17 */
     *(--sp) = 0x0;  /* S16 */
+
+    *(--sp) = 0xFFFFFFED; /* EXC RETURN: Load LR */
 
     /* Software Fake Frame*/
 

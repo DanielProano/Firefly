@@ -5,8 +5,10 @@ add_library(port_cortex_m4 STATIC
     src/systick.c
 )
 
-target_link_libraries(port_cortex_m4 PUBLIC 
-    hal_stm32f401)
+target_link_libraries(port_cortex_m4 PUBLIC
+    hal_stm32f401
+    cmsis
+)
 
 target_include_directories(port_cortex_m4 PUBLIC
     include
