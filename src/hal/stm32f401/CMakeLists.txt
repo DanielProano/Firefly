@@ -19,5 +19,6 @@ target_link_libraries(hal_stm32f401 PUBLIC
 # Translates to a -I flag passed to GCC, meaning search this directory for headers
 target_include_directories(hal_stm32f401 PUBLIC 
     include 
-    ${PROJECT_SOURCE_DIR}/config 
+    ${PROJECT_SOURCE_DIR}/config
+    ${PROJECT_SOURCE_DIR}/external/cmsis/core 
 )
