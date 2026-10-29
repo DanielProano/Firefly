@@ -6,6 +6,7 @@ uint32_t stack_pool[MAX_TASKS][TASK_STACK_SIZE];
 
 Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
     int mask = port_disable_interrupts();
+
     int new_task_slot = -1;
     for (int i = 0; i < MAX_TASKS; i++) {
         if (task_pool[i].state == UNINITIALIZED) {
@@ -25,6 +26,7 @@ Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
     port_init_task_stack(new_task, function);
 
     port_enable_interrupts(mask);
+
     return new_task;
 }
 

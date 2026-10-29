@@ -6,6 +6,7 @@
 
 void queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth) {
     int mask = port_disable_interrupts();
+
     queue->buffer = buffer;
     queue->item_size = item_size;
     queue->depth = depth;
@@ -17,11 +18,13 @@ void queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth) {
         queue->enqueue_waiting[i] = NULL;
         queue->dequeue_waiting[i] = NULL;
     }
+
     port_enable_interrupts(mask);
 }
 
 void enqueue(Queue *queue, void *item) {
     int mask = port_disable_interrupts();
+
     for (;;) {
 
         if (queue->count != queue->depth) {
@@ -73,6 +76,7 @@ void enqueue(Queue *queue, void *item) {
 
 void dequeue(Queue *queue, void *out) {
     int mask = port_disable_interrupts();
+
     for (;;) {
 
         if (queue->count != 0) {
@@ -124,6 +128,7 @@ void dequeue(Queue *queue, void *out) {
 
 bool dequeue_timeout(Queue *queue, void *out, uint32_t timeout_ticks) {
     int mask = port_disable_interrupts();
+    
     uint32_t deadline = scheduler_get_tick_count() + timeout_ticks;
 
     for (;;) {

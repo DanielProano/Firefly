@@ -6,17 +6,20 @@
 
 void semaphore_init(Semaphore *semaphore, uint8_t max_count) {
     int mask = port_disable_interrupts();
+
     semaphore->count = 0;
     semaphore->max_count = max_count;
 
     for (int i = 0; i < MAX_TASKS; i++) {
         semaphore->waiting[i] = NULL;
     }
+
     port_enable_interrupts(mask);
 }
 
 void semaphore_wait(Semaphore *semaphore) {
     int mask = port_disable_interrupts();
+
     while (semaphore->count == 0) {
         int slot = -1;
 
@@ -40,11 +43,13 @@ void semaphore_wait(Semaphore *semaphore) {
     }
 
     semaphore->count -= 1;
+
     port_enable_interrupts(mask);
 }
 
 void semaphore_signal(Semaphore *semaphore) {
     int mask = port_disable_interrupts();
+    
     if (semaphore->count < semaphore->max_count) {
         semaphore->count += 1;
     }

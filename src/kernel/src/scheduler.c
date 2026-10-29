@@ -9,8 +9,10 @@ Task *current_task = NULL;
 
 void scheduler_start(void) {
     int mask = port_disable_interrupts();
+
     scheduler_init();
     port_start_first_task();
+
     port_enable_interrupts(mask);
 }
 
@@ -20,12 +22,16 @@ void idle_task(void) {
 }
 
 void scheduler_init(void) {
+    int mask = port_disable_interrupts();
+
     /* Turn on SysTick */
     systick_init();
     /* Set its priority */
     nvic_init();
     /* Don't waste power when nothing ready */
     task_create(idle_task, 0, "idle");
+
+    port_enable_interrupts(mask);
 }
 
 void os_tick_callback(void) {
@@ -37,6 +43,7 @@ void os_tick_callback(void) {
     SysTick_Handler */
 void scheduler_tick(void) {
     int mask = port_disable_interrupts();
+
     tick_count += 1;
 
     for (int i = 0; i < MAX_TASKS; i++) {
@@ -62,6 +69,7 @@ void scheduler_tick(void) {
     will then select next task */
 void scheduler_select_next_task(void) {
     int mask = port_disable_interrupts();
+
     Task *next_task = NULL;
     for (int i = 0; i < MAX_TASKS; i++) {
         Task *cur_task = &task_pool[i];
@@ -89,15 +97,18 @@ void scheduler_select_next_task(void) {
     
     next_task->state = RUNNING;
     current_task = next_task;
+
     port_enable_interrupts(mask);
 }
 
 void task_delay(uint32_t ticks) {
     int mask = port_disable_interrupts();
+
     current_task->delay_until = tick_count + ticks;
     current_task->state = BLOCKED;
 
     port_enable_interrupts(mask);
+    
     port_trigger_context_switch();
 }
 

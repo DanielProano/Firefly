@@ -6,12 +6,14 @@
 
 void mutex_init(Mutex *mutex) {
     int mask = port_disable_interrupts();
+
     mutex->is_locked = false;
     mutex->owner = NULL;
 
     for (int i = 0; i < MAX_TASKS; i++) {
         mutex->waiting[i] = NULL;
     }
+
     port_enable_interrupts(mask);
 }
 
@@ -47,6 +49,7 @@ void mutex_lock(Mutex *mutex) {
 
 void mutex_unlock(Mutex *mutex) {
     int mask = port_disable_interrupts();
+    
     mutex->is_locked = false;
     mutex->owner = NULL;
 
