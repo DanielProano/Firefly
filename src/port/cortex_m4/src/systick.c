@@ -1,8 +1,12 @@
 #include "systick.h"
+#include "port.h"
 #include "stm32f401xc.h"
-#include "scheduler.h"
+
+extern void os_tick_callback(void);
 
 void systick_init(void) {
+    int mask = port_disable_interrupts();
+
     /* Page 247 in cortex manual*/
     /* Clksource 0 is AHB/8 while 1 is AHB */
     /* Tickint 0 is no Exception request while 1 is*/
@@ -26,8 +30,10 @@ void systick_init(void) {
     /* Page 249 of cortex*/
     /* Just clear it */
     SysTick->VAL = 0x00;
+
+    port_enable_interrupts(mask);
 }
 
 void SysTick_Handler(void) {
-    scheduler_tick();
+    os_tick_callback();
 }
