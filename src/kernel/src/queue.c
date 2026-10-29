@@ -1,11 +1,11 @@
 #include "queue.h"
 #include "scheduler.h"
 #include "port.h"
-#include "stm32f401xc.h"
 #include <stddef.h>
 #include <string.h>
 
 void queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth) {
+    int mask = port_disable_interrupts();
     queue->buffer = buffer;
     queue->item_size = item_size;
     queue->depth = depth;
@@ -17,11 +17,12 @@ void queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth) {
         queue->enqueue_waiting[i] = NULL;
         queue->dequeue_waiting[i] = NULL;
     }
+    port_enable_interrupts(mask);
 }
 
 void enqueue(Queue *queue, void *item) {
+    int mask = port_disable_interrupts();
     for (;;) {
-        __disable_irq();
 
         if (queue->count != queue->depth) {
             break;
@@ -37,15 +38,16 @@ void enqueue(Queue *queue, void *item) {
         }
 
         if (slot == -1) {
-            __enable_irq();
+            port_enable_interrupts(mask);
             port_fault();
         }
 
         queue->enqueue_waiting[slot] = current_task;
         current_task->state = BLOCKED;
 
-        __enable_irq();
+        port_enable_interrupts(mask);
         port_trigger_context_switch();
+        mask = port_disable_interrupts();
     }
 
     memcpy((uint8_t*)queue->buffer + (queue->tail * queue->item_size), item, queue->item_size);
@@ -62,7 +64,7 @@ void enqueue(Queue *queue, void *item) {
         }
     }
 
-    __enable_irq();
+    port_enable_interrupts(mask);
 
     if (woke_waiter) {
         port_trigger_context_switch();
@@ -70,8 +72,8 @@ void enqueue(Queue *queue, void *item) {
 }
 
 void dequeue(Queue *queue, void *out) {
+    int mask = port_disable_interrupts();
     for (;;) {
-        __disable_irq();
 
         if (queue->count != 0) {
             break;
@@ -87,15 +89,16 @@ void dequeue(Queue *queue, void *out) {
         }
 
         if (slot == -1) {
-            __enable_irq();
+            port_enable_interrupts(mask);
             port_fault();
         }
 
         queue->dequeue_waiting[slot] = current_task;
         current_task->state = BLOCKED;
 
-        __enable_irq();
+        port_enable_interrupts(mask);
         port_trigger_context_switch();
+        mask = port_disable_interrupts();
     }
 
     memcpy(out, (uint8_t*)queue->buffer + (queue->head * queue->item_size), queue->item_size);
@@ -112,7 +115,7 @@ void dequeue(Queue *queue, void *out) {
         }
     }
 
-    __enable_irq();
+    port_enable_interrupts(mask);
 
     if (woke_waiter) {
         port_trigger_context_switch();
@@ -120,10 +123,10 @@ void dequeue(Queue *queue, void *out) {
 }
 
 bool dequeue_timeout(Queue *queue, void *out, uint32_t timeout_ticks) {
+    int mask = port_disable_interrupts();
     uint32_t deadline = scheduler_get_tick_count() + timeout_ticks;
 
     for (;;) {
-        __disable_irq();
 
         if (queue->count != 0) {
             break;
@@ -137,7 +140,7 @@ bool dequeue_timeout(Queue *queue, void *out, uint32_t timeout_ticks) {
                 }
             }
 
-            __enable_irq();
+            port_enable_interrupts(mask);
             return false;
         }
 
@@ -151,7 +154,7 @@ bool dequeue_timeout(Queue *queue, void *out, uint32_t timeout_ticks) {
         }
 
         if (slot == -1) {
-            __enable_irq();
+            port_enable_interrupts(mask);
             port_fault();
         }
 
@@ -159,8 +162,9 @@ bool dequeue_timeout(Queue *queue, void *out, uint32_t timeout_ticks) {
         current_task->delay_until = deadline;
         current_task->state = BLOCKED;
 
-        __enable_irq();
+        port_enable_interrupts(mask);
         port_trigger_context_switch();
+        mask = port_disable_interrupts();
     }
 
     memcpy(out, (uint8_t*)queue->buffer + (queue->head * queue->item_size), queue->item_size);
@@ -177,7 +181,7 @@ bool dequeue_timeout(Queue *queue, void *out, uint32_t timeout_ticks) {
         }
     }
 
-    __enable_irq();
+    port_enable_interrupts(mask);
 
     if (woke_waiter) {
         port_trigger_context_switch();

@@ -10,6 +10,8 @@
 void port_init_task(Task *task, uint8_t priority, uint32_t slot, const char* name);
 void port_init_task_stack(Task *task, void (*function)(void));
 void port_trigger_context_switch(void);
+void port_enable_interrupts(int mask);
+int port_disable_interrupts(void);
 
 /* In port.s */
 void PendSV_Handler(void);

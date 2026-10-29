@@ -5,15 +5,18 @@
 #include <stddef.h>
 
 void semaphore_init(Semaphore *semaphore, uint8_t max_count) {
+    int mask = port_disable_interrupts();
     semaphore->count = 0;
     semaphore->max_count = max_count;
 
     for (int i = 0; i < MAX_TASKS; i++) {
         semaphore->waiting[i] = NULL;
     }
+    port_enable_interrupts(mask);
 }
 
 void semaphore_wait(Semaphore *semaphore) {
+    int mask = port_disable_interrupts();
     while (semaphore->count == 0) {
         int slot = -1;
 
@@ -30,13 +33,18 @@ void semaphore_wait(Semaphore *semaphore) {
 
         semaphore->waiting[slot] = current_task;
         current_task->state = BLOCKED;
+
+        port_enable_interrupts(mask);
         port_trigger_context_switch();
+        mask = port_disable_interrupts();
     }
 
     semaphore->count -= 1;
+    port_enable_interrupts(mask);
 }
 
 void semaphore_signal(Semaphore *semaphore) {
+    int mask = port_disable_interrupts();
     if (semaphore->count < semaphore->max_count) {
         semaphore->count += 1;
     }
@@ -50,6 +58,8 @@ void semaphore_signal(Semaphore *semaphore) {
             woke_waiter = true;
         }
     }
+
+    port_enable_interrupts(mask);
 
     if (woke_waiter) {
         port_trigger_context_switch();

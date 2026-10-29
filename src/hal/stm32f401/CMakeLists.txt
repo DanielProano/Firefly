@@ -7,6 +7,7 @@ add_library(hal_stm32f401 STATIC
 )
 
 target_link_libraries(hal_stm32f401 PUBLIC
+    stm32_arch
     cmsis
 )
 
