@@ -60,10 +60,9 @@ void mutex_unlock(Mutex *mutex) {
         }
     }
 
-    if (woke_waiter) {
-        port_enable_interrupts(mask);
-        port_trigger_context_switch();
-        mask = port_disable_interrupts();
-    }
     port_enable_interrupts(mask);
+
+    if (woke_waiter) {
+        port_trigger_context_switch();
+    }
 }
