@@ -18,7 +18,7 @@ target_include_directories(port_cortex_m4 PUBLIC ${CMAKE_SOURCE_DIR}/external/cm
 
 target_include_directories(port_cortex_m4 PUBLIC
     include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../config
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../kernel/include
+    ${PROJECT_SOURCE_DIR}/config
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/kernel/include
 )

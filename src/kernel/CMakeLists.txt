@@ -17,6 +17,6 @@ target_link_libraries(kernel PRIVATE
 
 target_include_directories(kernel PUBLIC 
     include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../config
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+    ${PROJECT_SOURCE_DIR}/config
+    ${PROJECT_SOURCE_DIR}/include
 )
