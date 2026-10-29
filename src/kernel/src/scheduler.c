@@ -28,6 +28,10 @@ void scheduler_init(void) {
     task_create(idle_task, 0, "idle");
 }
 
+void os_tick_callback(void) {
+    scheduler_tick();
+}
+
 /*  Called every 1ms to unblock 
     sleeping tasks, setup by 
     SysTick_Handler */
