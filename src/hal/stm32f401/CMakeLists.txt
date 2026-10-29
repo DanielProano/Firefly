@@ -21,4 +21,5 @@ target_include_directories(hal_stm32f401 PUBLIC
     include 
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../config 
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../external/cmsis/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../external/cmsis/device
 )
