@@ -8,8 +8,10 @@ static uint32_t tick_count = 0;
 Task *current_task = NULL;
 
 void scheduler_start(void) {
+    int mask = port_disable_interrupts();
     scheduler_init();
     port_start_first_task();
+    port_enable_interrupts(mask);
 }
 
 void idle_task(void) {
@@ -30,12 +32,14 @@ void scheduler_init(void) {
     sleeping tasks, setup by 
     SysTick_Handler */
 void scheduler_tick(void) {
+    int mask = port_disable_interrupts();
     tick_count += 1;
 
     for (int i = 0; i < MAX_TASKS; i++) {
         Task *cur_task = &task_pool[i];
 
         if (cur_task->state != UNINITIALIZED && task_state_overflow(*cur_task)) {
+            port_enable_interrupts(mask);
             port_fault();
         }
 
@@ -44,6 +48,8 @@ void scheduler_tick(void) {
         }
     }
 
+    port_enable_interrupts(mask);
+
     port_trigger_context_switch();
 }
 
@@ -51,6 +57,7 @@ void scheduler_tick(void) {
     cur task context, PendSV Handler
     will then select next task */
 void scheduler_select_next_task(void) {
+    int mask = port_disable_interrupts();
     Task *next_task = NULL;
     for (int i = 0; i < MAX_TASKS; i++) {
         Task *cur_task = &task_pool[i];
@@ -66,6 +73,7 @@ void scheduler_select_next_task(void) {
     /*  Should always have a READY Task,
         so shouldn't have to worry about this */
     if (next_task == NULL) {
+        port_enable_interrupts(mask);
         return;
     }
 
@@ -77,12 +85,15 @@ void scheduler_select_next_task(void) {
     
     next_task->state = RUNNING;
     current_task = next_task;
+    port_enable_interrupts(mask);
 }
 
 void task_delay(uint32_t ticks) {
+    int mask = port_disable_interrupts();
     current_task->delay_until = tick_count + ticks;
     current_task->state = BLOCKED;
 
+    port_enable_interrupts(mask);
     port_trigger_context_switch();
 }
 

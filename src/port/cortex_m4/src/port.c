@@ -98,6 +98,20 @@ void port_trigger_context_switch(void) {
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
+void port_enable_interrupts(int mask) {
+    __set_PRIMASK(mask);
+
+    __enable_irq();
+}
+
+int port_disable_interrupts(void) {
+    int mask = __get_PRIMASK();
+
+    __disable_irq();
+
+    return mask;
+}
+
 void port_fault(void) {
     warning_light();
 }

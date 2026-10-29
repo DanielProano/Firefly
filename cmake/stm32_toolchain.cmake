@@ -9,7 +9,7 @@ set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
 set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
 
-add_compile_options(
+set(STM32_FLAGS
     -mcpu=cortex-m4         # specify target CPU arch.
     -mthumb                 # M Cortex only uses mthumb (16 & 32 bit) ARM instructions, https://medium.com/@wadixtech/arm-cortex-m-thumb-encoding-fdb5f5c6b87b
     -mfpu=fpv4-sp-d16       # enable single-precision FPU + 16 double precision registers
@@ -18,7 +18,7 @@ add_compile_options(
     -fdata-sections         # GCC puts globals in separate linker section & eliminates dead code
 )
 
-add_link_options(
+set(STM32_LINK_FLAGS
     -mcpu=cortex-m4
     -mthumb                 # STM32F4 uses mthumb instructions
     -mfpu=fpv4-sp-d16

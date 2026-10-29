@@ -21,6 +21,11 @@ add_compile_options(
 option(BUILD_TESTS "Build unit tests" OFF)
 option(BUILD_EXAMPLES "Build examples" OFF)
 
+add_library(stm32_arch INTERFACE)
+
+target_compile_options(stm32_arch INTERFACE ${STM32_FLAGS} -Wall -Wextra -Werror)
+target_link_options(stm32_arch INTERFACE ${STM32_LINK_FLAGS})
+
 add_subdirectory(src/kernel)
 add_subdirectory(src/port/cortex_m4)
 add_subdirectory(src/hal/stm32f401)

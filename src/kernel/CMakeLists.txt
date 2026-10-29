@@ -11,6 +11,7 @@ target_link_libraries(kernel PUBLIC
 )
 
 target_link_libraries(kernel PRIVATE
+    stm32_arch
     cmsis
 )
 
