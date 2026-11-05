@@ -1,8 +1,8 @@
 #include "fault_indicator.h"
 #include "gpio.h"
 
-#define LONG_DELAY 100000000
-#define DELAY_TIME 10000000
+#define LONG_DELAY 10000000
+#define DELAY_TIME 1000000
 
 void delay(volatile uint32_t count) {
     while (count--);
