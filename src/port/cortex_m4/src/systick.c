@@ -5,7 +5,7 @@
 extern void os_tick_callback(void);
 
 void systick_init(void) {
-    int mask = port_disable_interrupts();
+    uint32_t mask = port_disable_interrupts();
 
     /* Page 247 in cortex manual*/
     /* Clksource 0 is AHB/8 while 1 is AHB */
@@ -31,7 +31,7 @@ void systick_init(void) {
     /* Just clear it */
     SysTick->VAL = 0x00;
 
-    port_enable_interrupts(mask);
+    port_restore_interrupts(mask);
 }
 
 void SysTick_Handler(void) {

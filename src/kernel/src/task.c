@@ -1,11 +1,12 @@
 #include "task.h"
 #include "port.h"
+#include <stdint.h>
 
 Task task_pool[MAX_TASKS];
 uint32_t stack_pool[MAX_TASKS][TASK_STACK_SIZE];
 
 Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
-    int mask = port_disable_interrupts();
+    uint32_t mask = port_disable_interrupts();
 
     int new_task_slot = -1;
     for (int i = 0; i < MAX_TASKS; i++) {
@@ -17,7 +18,7 @@ Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
 
     /* Fail if not enough task slots available */
     if (new_task_slot == -1) {
-        port_enable_interrupts(mask);
+        port_restore_interrupts(mask);
         port_fault();
     }
 
@@ -25,11 +26,11 @@ Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
     port_init_task(new_task, priority, new_task_slot, name);
     port_init_task_stack(new_task, function);
 
-    port_enable_interrupts(mask);
+    port_restore_interrupts(mask);
 
     return new_task;
 }
 
-bool task_state_overflow(Task task) {
-    return (*task.stack_base != 0xDEADBEEF) ? true : false;
+bool task_corrupted(Task *task) {
+    return (*task->stack_base != 0xDEADBEEF) ? true : false;
 }

@@ -20,6 +20,7 @@ typedef struct {
     uint32_t    delay_until;
     Task_State  state;
     uint8_t     priority;
+    uint8_t     id;
     bool        uses_fpu;
     const char  *name;
 } Task;
