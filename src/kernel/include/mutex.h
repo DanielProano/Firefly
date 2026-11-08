@@ -4,14 +4,20 @@
 #include "task.h"
 #include <stdbool.h>
 
+typedef enum {
+    MUTEX_OK,
+    MUTEX_BAD_OWNER,
+    MUTEX_FAILURE,
+} MutexStatus;
+
 typedef struct {
     Task *owner;
-    Task *waiting[MAX_TASKS];
+    Task *waiting_tasks[MAX_TASKS];
     bool is_locked;
 } Mutex;
 
-void mutex_init(Mutex *mutex);
-void mutex_lock(Mutex *mutex);
-void mutex_unlock(Mutex *mutex);
+MutexStatus mutex_init(Mutex *mutex);
+MutexStatus mutex_lock(Mutex *mutex);
+MutexStatus mutex_unlock(Mutex *mutex);
 
 #endif

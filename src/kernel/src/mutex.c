@@ -4,39 +4,57 @@
 #include <stdatomic.h>
 #include <stddef.h>
 
-void mutex_init(Mutex *mutex) {
-    int mask = port_disable_interrupts();
+MutexStatus mutex_init(Mutex *mutex) {
+    if (mutex == NULL) {
+        return MUTEX_FAILURE;
+    }
+
+    uint32_t mask = port_disable_interrupts();
 
     mutex->is_locked = false;
     mutex->owner = NULL;
 
     for (int i = 0; i < MAX_TASKS; i++) {
-        mutex->waiting[i] = NULL;
+        mutex->waiting_tasks[i] = NULL;
     }
 
-    port_enable_interrupts(mask);
+    port_restore_interrupts(mask);
+
+    return MUTEX_OK;
 }
 
-void mutex_lock(Mutex *mutex) {
-    int mask = port_disable_interrupts();
+MutexStatus mutex_lock(Mutex *mutex) {
+    if (mutex == NULL || current_task == NULL) {
+        return MUTEX_FAILURE;
+    }
+
+    uint32_t mask = port_disable_interrupts();
 
     while (mutex->is_locked) {
         int slot = -1;
 
+        // Guaranteed to be at least 1 free spot
         for (int i = 0; i < MAX_TASKS; i++) {
-            if (mutex->waiting[i] == NULL) {
+            if (mutex->waiting_tasks[i] == NULL) {
                 slot = i;
                 break;
+            }
+
+            if (mutex->waiting_tasks[i]->id == current_task->id) {
+                port_restore_interrupts(mask);
+                port_fault();
             }
         }
 
         if (slot == -1) {
+            port_restore_interrupts(mask);
             port_fault();
         }
 
-        mutex->waiting[slot] = current_task;
+        mutex->waiting_tasks[slot] = current_task;
         current_task->state = BLOCKED;
-        port_enable_interrupts(mask);
+
+        port_restore_interrupts(mask);
         port_trigger_context_switch();
         mask = port_disable_interrupts();
     }
@@ -44,11 +62,22 @@ void mutex_lock(Mutex *mutex) {
     mutex->is_locked = true;
     mutex->owner = current_task;
 
-    port_enable_interrupts(mask);
+    port_restore_interrupts(mask);
+
+    return MUTEX_OK;
 }
 
-void mutex_unlock(Mutex *mutex) {
-    int mask = port_disable_interrupts();
+MutexStatus mutex_unlock(Mutex *mutex) {
+    if (mutex == NULL || current_task == NULL) {
+        return MUTEX_FAILURE;
+    }
+
+    uint32_t mask = port_disable_interrupts();
+
+    if (current_task->id != mutex->owner->id) {
+        port_restore_interrupts(mask);
+        return MUTEX_BAD_OWNER;
+    }
     
     mutex->is_locked = false;
     mutex->owner = NULL;
@@ -56,16 +85,18 @@ void mutex_unlock(Mutex *mutex) {
     bool woke_waiter = false;
 
     for (int i = 0; i < MAX_TASKS; i++) {
-        if (mutex->waiting[i] != NULL) {
-            mutex->waiting[i]->state = READY;
-            mutex->waiting[i] = NULL;
+        if (mutex->waiting_tasks[i] != NULL) {
+            mutex->waiting_tasks[i]->state = READY;
+            mutex->waiting_tasks[i] = NULL;
             woke_waiter = true;
         }
     }
 
-    port_enable_interrupts(mask);
+    port_restore_interrupts(mask);
 
     if (woke_waiter) {
         port_trigger_context_switch();
     }
+
+    return MUTEX_OK;
 }

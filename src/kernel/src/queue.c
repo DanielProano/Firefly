@@ -1,11 +1,72 @@
 #include "queue.h"
-#include "scheduler.h"
 #include "port.h"
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
-void queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth) {
-    int mask = port_disable_interrupts();
+// Helper Macros
+
+#define RETURN_IF_NULL(queue, failure) \
+    do { \
+        if (queue == NULL) { \
+            return failure; \
+        } \
+    } while(0);
+
+#define RETURN_IF_EMPTY(item, failure) \
+    do { \
+        if (item == 0) { \
+            return failure; \
+        } \
+    } while(0);
+
+// Private API
+
+static inline bool queue_add(Queue *queue, const void *item) {
+    RETURN_IF_NULL(queue, false);
+    RETURN_IF_NULL(item, false);
+
+    if (queue->count == queue->depth) {
+        return false;
+    }
+
+    uint32_t offset = (uint32_t) queue->tail * (uint32_t) queue->item_size;
+    uint8_t *slot_addr = (uint8_t *)queue->buffer + offset;
+    memcpy(slot_addr, item, queue->item_size);
+
+    queue->count += 1;
+    queue->tail = (queue->tail + 1) % queue->depth;
+
+    return true;
+}
+
+static inline bool queue_read(Queue *queue, void *out) {
+    RETURN_IF_NULL(queue, false);
+    RETURN_IF_NULL(out, false);
+
+    if (queue->count == 0) {
+        return false;
+    }
+
+    uint32_t offset = (uint32_t) queue->head * (uint32_t) queue->item_size;
+    uint8_t *slot_addr = (uint8_t *)queue->buffer + offset;
+    memcpy(out, slot_addr, queue->item_size);
+
+    queue->count -= 1;
+    queue->head = (queue->head + 1) % queue->depth;
+
+    return true;
+}
+
+// Public API
+
+QueueStatus queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth) {
+    RETURN_IF_NULL(queue, QUEUE_FAILURE);
+    RETURN_IF_NULL(buffer, QUEUE_FAILURE);
+    RETURN_IF_EMPTY(item_size, QUEUE_FAILURE);
+    RETURN_IF_EMPTY(depth, QUEUE_FAILURE);
+
+    uint32_t mask = port_disable_interrupts();
 
     queue->buffer = buffer;
     queue->item_size = item_size;
@@ -14,235 +75,33 @@ void queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth) {
     queue->head = 0;
     queue->tail = 0;
 
-    for (int i = 0; i < MAX_TASKS; i++) {
-        queue->enqueue_waiting[i] = NULL;
-        queue->dequeue_waiting[i] = NULL;
-    }
-
-    port_enable_interrupts(mask);
+    port_restore_interrupts(mask);
+    return QUEUE_OK;
 }
 
-void enqueue(Queue *queue, void *item) {
-    int mask = port_disable_interrupts();
-
-    for (;;) {
-
-        if (queue->count != queue->depth) {
-            break;
-        }
-
-        int slot = -1;
-
-        for (int i = 0; i < MAX_TASKS; i++) {
-            if (queue->enqueue_waiting[i] == NULL) {
-                slot = i;
-                break;
-            }
-        }
-
-        if (slot == -1) {
-            port_enable_interrupts(mask);
-            port_fault();
-        }
-
-        queue->enqueue_waiting[slot] = current_task;
-        current_task->state = BLOCKED;
-
-        port_enable_interrupts(mask);
-        port_trigger_context_switch();
-        mask = port_disable_interrupts();
-    }
-
-    memcpy((uint8_t*)queue->buffer + (queue->tail * queue->item_size), item, queue->item_size);
-    queue->tail = (queue->tail + 1) % queue->depth;
-    queue->count += 1;
-
-    bool woke_waiter = false;
-
-    for (int i = 0; i < MAX_TASKS; i++) {
-        if (queue->dequeue_waiting[i] != NULL) {
-            queue->dequeue_waiting[i]->state = READY;
-            queue->dequeue_waiting[i] = NULL;
-            woke_waiter = true;
-        }
-    }
-
-    port_enable_interrupts(mask);
-
-    if (woke_waiter) {
-        port_trigger_context_switch();
-    }
-}
-
-void dequeue(Queue *queue, void *out) {
-    int mask = port_disable_interrupts();
-
-    for (;;) {
-
-        if (queue->count != 0) {
-            break;
-        }
-
-        int slot = -1;
-
-        for (int i = 0; i < MAX_TASKS; i++) {
-            if (queue->dequeue_waiting[i] == NULL) {
-                slot = i;
-                break;
-            }
-        }
-
-        if (slot == -1) {
-            port_enable_interrupts(mask);
-            port_fault();
-        }
-
-        queue->dequeue_waiting[slot] = current_task;
-        current_task->state = BLOCKED;
-
-        port_enable_interrupts(mask);
-        port_trigger_context_switch();
-        mask = port_disable_interrupts();
-    }
-
-    memcpy(out, (uint8_t*)queue->buffer + (queue->head * queue->item_size), queue->item_size);
-    queue->head = (queue->head + 1) % queue->depth;
-    queue->count -= 1;
-
-    bool woke_waiter = false;
-
-    for (int i = 0; i < MAX_TASKS; i++) {
-        if (queue->enqueue_waiting[i] != NULL) {
-            queue->enqueue_waiting[i]->state = READY;
-            queue->enqueue_waiting[i] = NULL;
-            woke_waiter = true;
-        }
-    }
-
-    port_enable_interrupts(mask);
-
-    if (woke_waiter) {
-        port_trigger_context_switch();
-    }
-}
-
-bool dequeue_timeout(Queue *queue, void *out, uint32_t timeout_ticks) {
-    int mask = port_disable_interrupts();
+QueueStatus enqueue(Queue *queue, const void *item) {
+    RETURN_IF_NULL(queue, QUEUE_FAILURE);
+    RETURN_IF_NULL(item, QUEUE_FAILURE);
     
-    uint32_t deadline = scheduler_get_tick_count() + timeout_ticks;
+    uint32_t mask = port_disable_interrupts();
+    
+    bool added = queue_add(queue, item);
 
-    for (;;) {
+    port_restore_interrupts(mask);
 
-        if (queue->count != 0) {
-            break;
-        }
-
-        if (scheduler_get_tick_count() >= deadline) {
-            for (int i = 0; i < MAX_TASKS; i++) {
-                if (queue->dequeue_waiting[i] == current_task) {
-                    queue->dequeue_waiting[i] = NULL;
-                    break;
-                }
-            }
-
-            port_enable_interrupts(mask);
-            return false;
-        }
-
-        int slot = -1;
-
-        for (int i = 0; i < MAX_TASKS; i++) {
-            if (queue->dequeue_waiting[i] == NULL) {
-                slot = i;
-                break;
-            }
-        }
-
-        if (slot == -1) {
-            port_enable_interrupts(mask);
-            port_fault();
-        }
-
-        queue->dequeue_waiting[slot] = current_task;
-        current_task->delay_until = deadline;
-        current_task->state = BLOCKED;
-
-        port_enable_interrupts(mask);
-        port_trigger_context_switch();
-        mask = port_disable_interrupts();
-    }
-
-    memcpy(out, (uint8_t*)queue->buffer + (queue->head * queue->item_size), queue->item_size);
-    queue->head = (queue->head + 1) % queue->depth;
-    queue->count -= 1;
-
-    bool woke_waiter = false;
-
-    for (int i = 0; i < MAX_TASKS; i++) {
-        if (queue->enqueue_waiting[i] != NULL) {
-            queue->enqueue_waiting[i]->state = READY;
-            queue->enqueue_waiting[i] = NULL;
-            woke_waiter = true;
-        }
-    }
-
-    port_enable_interrupts(mask);
-
-    if (woke_waiter) {
-        port_trigger_context_switch();
-    }
-
-    return true;
+    return added ? QUEUE_OK : QUEUE_FAILURE;
 }
 
-bool enqueue_isr(Queue *queue, void *item) {
-    if (queue->count == queue->depth) {
-        return false;
-    }
+QueueStatus dequeue(Queue *queue, void *out) {
+    RETURN_IF_NULL(queue, QUEUE_FAILURE);
+    RETURN_IF_NULL(out, QUEUE_FAILURE);
+    
+    uint32_t mask = port_disable_interrupts();
+    
+    bool read = queue_read(queue, out);
+    
+    port_restore_interrupts(mask);
 
-    memcpy((uint8_t*)queue->buffer + (queue->tail * queue->item_size), item, queue->item_size);
-    queue->tail = (queue->tail + 1) % queue->depth;
-    queue->count += 1;
-
-    bool woke_waiter = false;
-
-    for (int i = 0; i < MAX_TASKS; i++) {
-        if (queue->dequeue_waiting[i] != NULL) {
-            queue->dequeue_waiting[i]->state = READY;
-            queue->dequeue_waiting[i] = NULL;
-            woke_waiter = true;
-        }
-    }
-
-    if (woke_waiter) {
-        port_trigger_context_switch();
-    }
-
-    return true;
+    return read ? QUEUE_OK : QUEUE_FAILURE;
 }
 
-bool dequeue_isr(Queue *queue, void *out) {
-    if (queue->count == 0) {
-        return false;
-    }
-
-    memcpy(out, (uint8_t*)queue->buffer + (queue->head * queue->item_size), queue->item_size);
-    queue->head = (queue->head + 1) % queue->depth;
-    queue->count -= 1;
-
-    bool woke_waiter = false;
-
-    for (int i = 0; i < MAX_TASKS; i++) {
-        if (queue->enqueue_waiting[i] != NULL) {
-            queue->enqueue_waiting[i]->state = READY;
-            queue->enqueue_waiting[i] = NULL;
-            woke_waiter = true;
-        }
-    }
-
-    if (woke_waiter) {
-        port_trigger_context_switch();
-    }
-
-    return true;
-}

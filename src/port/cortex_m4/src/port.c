@@ -2,6 +2,9 @@
 #include "rtos_config.h"
 #include "fault_indicator.h"
 #include "stm32f401xc.h"
+#include <stdint.h>
+
+static uint32_t global_id = 0;
 
 void port_init_task(Task *task, uint8_t priority, uint32_t slot, const char *name) {
     task->stack_base = stack_pool[slot];
@@ -11,6 +14,7 @@ void port_init_task(Task *task, uint8_t priority, uint32_t slot, const char *nam
     task->delay_until = 0;
     task->priority = priority;
     task->state = READY;
+    task->id = global_id++;
 }
 
 void port_init_task_stack(Task *task, void (*function)(void)) {
@@ -98,14 +102,16 @@ void port_trigger_context_switch(void) {
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 }
 
-void port_enable_interrupts(int mask) {
-    __set_PRIMASK(mask);
-
+void port_enable_interrupts(void) {
     __enable_irq();
 }
 
-int port_disable_interrupts(void) {
-    int mask = __get_PRIMASK();
+void port_restore_interrupts(uint32_t mask) {
+    __set_PRIMASK(mask);
+}
+
+uint32_t port_disable_interrupts(void) {
+    uint32_t mask = __get_PRIMASK();
 
     __disable_irq();
 
