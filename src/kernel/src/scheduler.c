@@ -24,7 +24,7 @@ void idle_task(void) {
 }
 
 void scheduler_init(void) {
-    int mask = port_disable_interrupts();
+    uint32_t mask = port_disable_interrupts();
 
     /* Turn on SysTick */
     systick_init();

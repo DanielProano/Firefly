@@ -20,7 +20,7 @@ typedef struct {
 } Queue;
 
 QueueStatus queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth);
-QueueStatus enqueue_blocking(Queue *queue, const void *item);
-QueueStatus dequeue_blocking(Queue *queue, void *out);
+QueueStatus enqueue(Queue *queue, const void *item);
+QueueStatus dequeue(Queue *queue, void *out);
 
 #endif

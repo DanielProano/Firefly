@@ -8,8 +8,8 @@ uint32_t stack_pool[MAX_TASKS][TASK_STACK_SIZE];
 Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
     uint32_t mask = port_disable_interrupts();
 
-    int new_task_slot = -1;
-    for (int i = 0; i < MAX_TASKS; i++) {
+    int8_t new_task_slot = -1;
+    for (int8_t i = 0; i < MAX_TASKS; i++) {
         if (task_pool[i].state == UNINITIALIZED) {
             new_task_slot = i;
             break;
@@ -23,7 +23,7 @@ Task *task_create(void (*function)(void), uint8_t priority, const char *name) {
     }
 
     Task *new_task = &task_pool[new_task_slot];
-    port_init_task(new_task, priority, new_task_slot, name);
+    port_init_task(new_task, priority, (uint8_t)new_task_slot, name);
     port_init_task_stack(new_task, function);
 
     port_restore_interrupts(mask);

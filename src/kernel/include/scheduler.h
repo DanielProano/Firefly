@@ -7,6 +7,7 @@ extern Task *current_task;
 
 void scheduler_init(void);
 void scheduler_start(void);
+void idle_task(void);
 void os_tick_callback(void);
 void scheduler_tick(void);
 void scheduler_select_next_task(void);

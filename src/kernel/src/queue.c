@@ -35,7 +35,7 @@ static inline bool queue_add(Queue *queue, const void *item) {
     memcpy(slot_addr, item, queue->item_size);
 
     queue->count += 1;
-    queue->tail = (queue->tail + 1) % queue->depth;
+    queue->tail = (uint8_t)((queue->tail + 1) % queue->depth);
 
     return true;
 }
@@ -53,7 +53,7 @@ static inline bool queue_read(Queue *queue, void *out) {
     memcpy(out, slot_addr, queue->item_size);
 
     queue->count -= 1;
-    queue->head = (queue->head + 1) % queue->depth;
+    queue->head = (uint8_t)((queue->head + 1) % queue->depth);
 
     return true;
 }

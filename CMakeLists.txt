@@ -16,6 +16,17 @@ add_compile_options(
     -Wall
     -Wextra
     -Werror
+    -Wmissing-prototypes
+    -Wshadow
+    -Wconversion
+    -Wsign-conversion
+    -Wcast-qual
+    -Wdouble-promotion
+    -Wswitch-enum
+    -Wfloat-equal
+    -Wnull-dereference
+    -Wpointer-arith
+    -Wcast-align
 )
 
 option(BUILD_TESTS "Build unit tests" OFF)
