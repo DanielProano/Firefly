@@ -10,12 +10,8 @@ static uint32_t tick_count = 0;
 Task *current_task = NULL;
 
 void scheduler_start(void) {
-    uint32_t mask = port_disable_interrupts();
-
     scheduler_init();
     port_start_first_task();
-
-    port_restore_interrupts(mask);
 }
 
 void idle_task(void) {
