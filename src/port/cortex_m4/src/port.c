@@ -55,7 +55,7 @@ void port_init_task_stack(Task *task, void (*function)(void)) {
     *(--sp) = 0x0;  /* S0 */
     *(--sp) = 0x01000000; /* XPSR needs thumb bit, its stupid bc. this cant even run non-thumb instrs*/
     *(--sp) = (uint32_t) function; /* PC */
-    *(--sp) = 0xFFFFFFFF; /* Linker Register should fault if ever returned */
+    *(--sp) = (uint32_t) port_fault; /* Linker Register should fault if ever returned */
     *(--sp) = 0x0;  /* R12 */
     *(--sp) = 0x0;  /* R3 */
     *(--sp) = 0x0;  /* R2 */
