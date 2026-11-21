@@ -16,7 +16,6 @@ typedef struct {
     uint8_t head;
     uint8_t tail;
     uint8_t count;
-    uint8_t id;
 } Queue;
 
 QueueStatus queue_init(Queue *queue, void *buffer, uint8_t item_size, uint8_t depth);
