@@ -35,7 +35,7 @@ void semaphore_wait(Semaphore *semaphore) {
         }
 
         semaphore->waiting[slot] = current_task;
-        current_task->state = BLOCKED;
+        current_task->state = WAITING;
 
         port_restore_interrupts(mask);
         port_trigger_context_switch();

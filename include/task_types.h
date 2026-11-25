@@ -10,7 +10,8 @@ typedef enum {
     UNINITIALIZED,
     READY,
     RUNNING,
-    BLOCKED
+    BLOCKED,
+    WAITING
 } Task_State;
 
 typedef struct {
